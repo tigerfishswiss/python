@@ -24,13 +24,15 @@ pipeline {
                     //This image parameter (of the agent section’s docker parameter) downloads the python:2-alpine
                     //Docker image and runs this image as a separate container. The Python container becomes
                     //the agent that Jenkins uses to run the Build stage of your Pipeline project.
-                    image 'python:2-alpine'
+                    //image 'python:2-alpine'
+                    image 'python'
                 }
             }
             steps {
                 //This sh step runs the Python command to compile your application and
                 //its calc library into byte code files, which are placed into the sources workspace directory
                 //sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+                sh 'python --version'
                 sh 'python -m compileall -f pipelinepoc/src' 
                 //This stash step saves the Python source code and compiled byte code files from the sources
                 //workspace directory for use in later stages.
@@ -71,7 +73,7 @@ pipeline {
                     //This image parameter (of the agent section’s docker parameter) downloads the python:2-alpine
                     //Docker image and runs this image as a separate container. The Python container becomes
                     //the agent that Jenkins uses to run the Build stage of your Pipeline project.
-                    image 'python:2-alpine'
+                    image 'python'
                 }
             }
 
@@ -90,6 +92,7 @@ pipeline {
                             //and outputs this file to the dist workspace directory (within the Jenkins home directory).
                             //sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'"
                             
+                            sh 'python --version'
                             sh 'python -m pip install --upgrade pip setuptools wheel'
 			    sh 'python -m pip install --upgrade build'
 			    sh 'python -m pip install --upgrade twine'
@@ -100,7 +103,7 @@ pipeline {
                         success {
                             //This archiveArtifacts step archives the standalone executable file and exposes this file
                             //through the Jenkins interface.
-                            archiveArtifacts "target/pipelinepoc/dist/*.*"
+                            archiveArtifacts "build_target/pipelinepoc/dist/*.*"
                             //sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
                         }
                }
