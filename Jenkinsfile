@@ -3,6 +3,17 @@ pipeline {
 //execution and that each stage directive must specify its own agent section.
     agent none
     stages {
+       stage ('Initialization') {
+       agent any
+       steps {
+        echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+        echo "The root dir is ${env.WORKSPACE}"
+        echo "The Project name is  ${env.JOB_NAME}"
+        echo "The Node name is ${env.NODE_NAME}"
+        echo "The build tag is ${env.BUILD_TAG}" and Build URL is ${env.BUILD_URL}"
+        }	
+       }
+        
         stage('Build') {
             agent {
                 docker {
