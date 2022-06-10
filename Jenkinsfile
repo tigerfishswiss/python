@@ -13,7 +13,7 @@ pipeline {
         	echo "The Node name is ${env.NODE_NAME}"
         	echo "The build tag is ${env.BUILD_TAG} and Build URL is ${env.BUILD_URL}"
         	dir ("${env.JOB_NAME}") {
-        	  deleteDir()
+        	  rm -rf *
         	}
            }	
        }
@@ -92,13 +92,19 @@ pipeline {
                             //and outputs this file to the dist workspace directory (within the Jenkins home directory).
                             //sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'"
                             
-                            sh 'python --version'
-                            sh 'python -m pip install pip' 
-                            sh 'python -m pip install setuptools'
-                            sh 'python -m pip install wheel'
-			    sh 'python -m pip install build'
+                            //sh 'python --version'
+                            //sh 'python -m pip install pip' 
+                            //sh 'python -m pip install setuptools'
+                            //sh 'python -m pip install wheel'
+			   //sh 'python -m pip install build'
 			    //sh 'python -m pip install --upgrade twine'
-                            sh 'python -m build build_target/pipelinepoc'
+                            //sh 'python -m build build_target/pipelinepoc'
+                            
+                            sh "pwd"
+                            dir("pipelinepoc") {
+                            sh "pwd"
+                            sh 'python setup.py bdist_wheel'
+                            }
                         }
                     }
                     post {
