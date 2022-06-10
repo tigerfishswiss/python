@@ -4,7 +4,7 @@ pipeline {
     agent none
     stages {
        
-       stage ('Initialization') {
+       stage ('Step') {
        	    agent any
        	    steps {
         	echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
@@ -12,7 +12,9 @@ pipeline {
         	echo "The Project name is  ${env.JOB_NAME}"
         	echo "The Node name is ${env.NODE_NAME}"
         	echo "The build tag is ${env.BUILD_TAG} and Build URL is ${env.BUILD_URL}"
-        	rm -rf ${env.JOB_NAME} 
+        	dir ("${env.JOB_NAME}") {
+        	  deleteDir()
+        	}
            }	
        }
         
@@ -80,14 +82,14 @@ pipeline {
                         //This unstash step restores the Python source code and compiled byte
                         //code files (with .pyc extension) from the previously saved stash. image]
                         //and runs this image as a separate container.
-                        dir(path: 'target') {
+                        dir(path: "build_target") {
                             unstash(name: 'compiled-results')
 
                             //This sh step executes the pyinstaller command (in the PyInstaller container) on your simple Python application.
                             //This bundles your add2vals.py Python application into a single standalone executable file
                             //and outputs this file to the dist workspace directory (within the Jenkins home directory).
                             //sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'"
-                            sh 'python -m build target/pipelinepoc'
+                            sh 'python -m build build_target/pipelinepoc'
                         }
                     }
                     post {
