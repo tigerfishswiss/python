@@ -13,7 +13,8 @@ pipeline {
         	echo "The Node name is ${env.NODE_NAME}"
         	echo "The build tag is ${env.BUILD_TAG} and Build URL is ${env.BUILD_URL}"
         	dir ("${env.JOB_NAME}") {
-        	  rm -rf *
+        	  //sh rm -rf *
+        	  deleteDir()
         	}
            }	
        }
