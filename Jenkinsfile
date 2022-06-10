@@ -11,7 +11,7 @@ pipeline {
         	echo "The root dir is ${env.WORKSPACE}"
         	echo "The Project name is  ${env.JOB_NAME}"
         	echo "The Node name is ${env.NODE_NAME}"
-        	echo "The build tag is ${env.BUILD_TAG}" and Build URL is ${env.BUILD_URL}"
+        	echo "The build tag is ${env.BUILD_TAG} and Build URL is ${env.BUILD_URL}"
            }	
        }
         
