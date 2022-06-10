@@ -20,7 +20,7 @@ pipeline {
                 //This stash step saves the Python source code and compiled byte code files from the sources
                 //workspace directory for use in later stages.
                 //stash(name: 'compiled-results', includes: 'sources/*.py*')
-                stash(name: 'compiled-results', includes: 'pipelinepoc/src/midserver/aura*.*')
+                stash(name: 'compiled-results', includes: 'pipelinepoc/src/midserver/aura/*.*')
             }
         }
         stage('Test') {
