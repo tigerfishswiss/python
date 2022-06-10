@@ -94,7 +94,7 @@ pipeline {
                             
                             sh 'python --version'
                             //sh 'python -m pip install --upgrade pip setuptools wheel'
-			    //sh 'python -m pip install --upgrade build'
+			    sh 'python -m pip install --upgrade build'
 			    //sh 'python -m pip install --upgrade twine'
                             sh 'python -m build build_target/pipelinepoc'
                         }
