@@ -4,6 +4,11 @@ pipeline {
     agent none
     stages {
        
+        environment {
+            CI = true
+            ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
+        }
+
        stage ('Step') {
        	    agent any
        	    steps {
@@ -42,6 +47,7 @@ pipeline {
                 stash(name: 'compiled-results', includes: 'pipelinepoc/**/*' )
             }
         }
+        
         stage('Test') {
             agent {
                 docker {
@@ -78,44 +84,55 @@ pipeline {
                 }
             }
 
-                 steps {
-                        //This dir step creates a new subdirectory named by the build number.
-                        //The final program will be created in that directory by pyinstaller.
-                        //BUILD_ID is one of the pre-defined Jenkins environment variables.
-                        //This unstash step restores the Python source code and compiled byte
-                        //code files (with .pyc extension) from the previously saved stash. image]
-                        //and runs this image as a separate container.
-                        dir(path: "build_target") {
-                            unstash(name: 'compiled-results')
+            steps {
+                //This dir step creates a new subdirectory named by the build number.
+                //The final program will be created in that directory by pyinstaller.
+                //BUILD_ID is one of the pre-defined Jenkins environment variables.
+                //This unstash step restores the Python source code and compiled byte
+                //code files (with .pyc extension) from the previously saved stash. image]
+                //and runs this image as a separate container.
+                dir(path: "build_target") {
+                    unstash(name: 'compiled-results')
 
-                            //This sh step executes the pyinstaller command (in the PyInstaller container) on your simple Python application.
-                            //This bundles your add2vals.py Python application into a single standalone executable file
-                            //and outputs this file to the dist workspace directory (within the Jenkins home directory).
-                            //sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'"
+                    //This sh step executes the pyinstaller command (in the PyInstaller container) on your simple Python application.
+                    //This bundles your add2vals.py Python application into a single standalone executable file
+                    //and outputs this file to the dist workspace directory (within the Jenkins home directory).
+                    //sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'"
                             
-                            //sh 'python --version'
-                            //sh 'python -m pip install pip' 
-                            //sh 'python -m pip install setuptools'
-                            //sh 'python -m pip install wheel'
-			   //sh 'python -m pip install build'
-			    //sh 'python -m pip install --upgrade twine'
-                            //sh 'python -m build build_target/pipelinepoc'
-                            
-                            sh "pwd"
-                            dir("pipelinepoc") {
-                            sh "pwd"
-                            sh 'python setup.py bdist_wheel'
-                            }
-                        }
+                    //sh 'python --version'
+                    //sh 'python -m pip install pip' 
+                    //sh 'python -m pip install setuptools'
+                    //sh 'python -m pip install wheel'
+			        //sh 'python -m pip install build'
+			        //sh 'python -m pip install --upgrade twine'
+                    //sh 'python -m build build_target/pipelinepoc'
+                    sh "pwd"
+                    dir("pipelinepoc") {
+                        sh "pwd"
+                        sh 'python setup.py bdist_wheel'
                     }
-                    post {
-                        success {
-                            //This archiveArtifacts step archives the standalone executable file and exposes this file
-                            //through the Jenkins interface.
-                            archiveArtifacts "build_target/pipelinepoc/dist/*.*"
-                            //sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
-                        }
-               }
+                }
+            }
+            post {
+                success {
+                    //This archiveArtifacts step archives the standalone executable file and exposes this file
+                    //through the Jenkins interface.
+                    archiveArtifacts "build_target/pipelinepoc/dist/*.*"
+                    //sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
+                }
+            }
+        }
+
+        stage('Upload to Artifactory') {
+            agent {
+                docker {
+                    image 'releases-docker.jfrog.io/jfrog/jfrog-cli-v2:2.2.0' 
+                    reuseNode true
+                }
+           }
+            steps {
+                sh 'jfrog rt upload --url http://172.30.64.1:8082/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} build_target/pipelinepoc/dist/*'
+            }
         }
     }
 }
