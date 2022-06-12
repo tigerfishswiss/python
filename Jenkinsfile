@@ -133,7 +133,7 @@ pipeline {
                 }
            }
             steps {
-                sh 'jfrog rt upload --url http://172.30.64.1:8082/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} build_target/pipelinepoc/dist/pipelinepoc_tigerfish-0.0.1-py3-none-any.whl/'
+                sh 'jfrog rt upload --url http://172.30.64.1:8082/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} build_target/pipelinepoc/dist/* pypi-repo-local/'
             }
         }
     }
