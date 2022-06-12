@@ -2,12 +2,14 @@ pipeline {
 //None parameter in the agent section means that no global agent will be allocated for the entire Pipeline’s
 //execution and that each stage directive must specify its own agent section.
     agent none
+    environment {
+        CI = true
+        ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
+    }
+    
     stages {
        
-        environment {
-            CI = true
-            ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
-        }
+    
 
        stage ('Step') {
        	    agent any
