@@ -139,6 +139,7 @@ pipeline {
         */
 
         stage('Upload to Artifactory') {
+            agent any
             steps {
                 curl --version
                 curl -sSf -u admin:password -X PUT -T build_target/pipelinepoc/dist/pipelinepoc_tigerfish-0.0.1-py3-none-any.whl http://172.30.64.1:8082/artifactory/pypi-repo-local/build_target/pipelinepoc/disk1/pipelinepoc_tigerfish-0.0.1-py3-none-any.whl
