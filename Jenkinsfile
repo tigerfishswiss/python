@@ -124,7 +124,7 @@ pipeline {
                 }
             }
         }
-
+        /*
         stage('Upload to Artifactory') {
             agent {
                 docker {
@@ -136,5 +136,13 @@ pipeline {
                 sh 'jfrog rt upload --url http://172.30.64.1:8082/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} build_target/pipelinepoc/dist/* pypi-repo-local/'
             }
         }
-    }
+        */
+
+        stage('Upload to Artifactory') {
+            steps {
+                curl --version
+                curl -sSf -u admin:password -X PUT -T build_target/pipelinepoc/dist/pipelinepoc_tigerfish-0.0.1-py3-none-any.whl http://172.30.64.1:8082/artifactory/pypi-repo-local/build_target/pipelinepoc/disk1/pipelinepoc_tigerfish-0.0.1-py3-none-any.whl
+                curl -sSf -u admin:<${ARTIFACTORY_ACCESS_TOKEN}> -X PUT -T build_target/pipelinepoc/dist/pipelinepoc_tigerfish-0.0.1-py3-none-any.whl http://172.30.64.1:8082/artifactory/pypi-repo-local/build_target/pipelinepoc/disk2/pipelinepoc_tigerfish-0.0.1-py3-none-any.whl
+            }
+        }
 }
